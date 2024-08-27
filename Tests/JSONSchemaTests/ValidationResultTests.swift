@@ -20,7 +20,7 @@ public let testValidationResult: ((ContextType) -> Void) = {
   $0.describe("invalid result") {
     $0.it("can be converted to JSON") {
       let error = ValidationError(
-        "example description",
+        .meta(.falsySchema),
         instanceLocation: JSONPointer(path: "/test/1"),
         keywordLocation: JSONPointer(path: "#/example")
       )
@@ -33,7 +33,7 @@ public let testValidationResult: ((ContextType) -> Void) = {
         "valid": false,
         "errors": [
           [
-            "error": "example description",
+            "error": "Falsy schema",
             "instanceLocation": "/test/1",
             "keywordLocation": "#/example",
           ],

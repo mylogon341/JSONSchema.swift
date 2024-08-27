@@ -1,5 +1,52 @@
 import Foundation
 
+public enum ValidationErrorFormatting: ValidationErrorReasonType {
+  case unsupported(instance: String)
+  case invalidIPv4Address(instance: String)
+  case invalidIPv6Address(instance: String)
+  case invalidUri(instance: String)
+  case invalidRegex(instance: String)
+  case invalidUUID(instance: String)
+  case invalidJsonPointer(instance: String)
+  case rfc3339Time(instance: String)
+  case rfc3339Date(instance: String)
+  case duration(instance: String)
+  
+  var name: String {
+    switch self {
+    case .invalidIPv4Address: "IPv4 address"
+    case .invalidIPv6Address: "IPv6 address"
+    case .invalidUri: "URI"
+    case .invalidUUID: "UUID"
+    case .invalidRegex: "regex"
+    case .invalidJsonPointer: "JSON Pointer"
+    case .rfc3339Time: "RFC 3339 formatted time"
+    case .rfc3339Date: "RFC 3339 formatted date"
+    case .duration: "duration"
+      
+    case .unsupported: fatalError("should not be referenced")
+    }
+  }
+  
+  public var description: String {
+    switch self {
+      
+    case .unsupported(instance: let format):
+      "'format' validation of '\(format)' is not yet supported."
+    case .invalidIPv4Address(instance: let instance),
+        .invalidIPv6Address(instance: let instance),
+        .invalidUri(instance: let instance),
+        .invalidRegex(instance: let instance),
+        .invalidUUID(instance: let instance),
+        .invalidJsonPointer(instance: let instance),
+        .rfc3339Time(instance: let instance),
+        .rfc3339Date(instance: let instance),
+        .duration(instance: let instance):
+      
+      "'\(instance)' is an invalid \(name)"
+    }
+  }
+}
 
 func format(context: Context, format: Any, instance: Any, schema: [String: Any]) throws -> AnySequence<ValidationError> {
   guard let format = format as? String else {
@@ -13,7 +60,7 @@ func format(context: Context, format: Any, instance: Any, schema: [String: Any])
   guard let validator = context.validator.formats[format] else {
     return AnySequence([
       ValidationError(
-        "'format' validation of '\(format)' is not yet supported.",
+        .formatting(.unsupported(instance: format)),
         instanceLocation: context.instanceLocation,
         keywordLocation: context.keywordLocation
       )
@@ -33,7 +80,7 @@ func validateIPv4(_ context: Context, _ value: String) -> AnySequence<Validation
 
   return AnySequence([
     ValidationError(
-      "'\(value)' is not a IPv4 address.",
+      .formatting(.invalidIPv4Address(instance: value)),
       instanceLocation: context.instanceLocation,
       keywordLocation: context.keywordLocation
     )
@@ -51,7 +98,7 @@ func validateIPv6(_ context: Context, _ value: String) -> AnySequence<Validation
 
   return AnySequence([
     ValidationError(
-      "'\(value)' is not a value address.",
+      .formatting(.invalidIPv6Address(instance: value)),
       instanceLocation: context.instanceLocation,
       keywordLocation: context.keywordLocation
     )
@@ -74,7 +121,7 @@ func validateURI(_ context: Context, _ value: String) -> AnySequence<ValidationE
 
   return AnySequence([
     ValidationError(
-      "'\(value)' is not a valid uri.",
+      .formatting(.invalidUri(instance: value)),
       instanceLocation: context.instanceLocation,
       keywordLocation: context.keywordLocation
     )
@@ -86,7 +133,7 @@ func validateUUID(_ context: Context, _ value: String) -> AnySequence<Validation
   if UUID(uuidString: value) == nil {
     return AnySequence([
       ValidationError(
-        "'\(value)' is not a valid uuid.",
+        .formatting(.invalidUUID(instance: value)),
         instanceLocation: context.instanceLocation,
         keywordLocation: context.keywordLocation
       )
@@ -103,7 +150,7 @@ func validateRegex(_ context: Context, _ value: String) -> AnySequence<Validatio
   } catch {
     return AnySequence([
       ValidationError(
-        "'\(value)' is not a valid regex.",
+        .formatting(.invalidRegex(instance: value)),
         instanceLocation: context.instanceLocation,
         keywordLocation: context.keywordLocation
       )
@@ -122,7 +169,7 @@ func validateJSONPointer(_ context: Context, _ value: String) -> AnySequence<Val
   if !value.hasPrefix("/") {
     return AnySequence([
       ValidationError(
-        "'\(value)' is not a valid json-pointer.",
+        .formatting(.invalidJsonPointer(instance: value)),
         instanceLocation: context.instanceLocation,
         keywordLocation: context.keywordLocation
       )
@@ -137,7 +184,7 @@ func validateJSONPointer(_ context: Context, _ value: String) -> AnySequence<Val
     // unescaped ~
     return AnySequence([
       ValidationError(
-        "'\(value)' is not a valid json-pointer.",
+        .formatting(.invalidJsonPointer(instance: value)),
         instanceLocation: context.instanceLocation,
         keywordLocation: context.keywordLocation
       )

@@ -27,7 +27,7 @@ func validateDate(_ context: Context, _ value: String) -> AnySequence<Validation
 
   return AnySequence([
     ValidationError(
-      "'\(value)' is not a valid RFC 3339 formatted date.",
+      .formatting(.rfc3339Date(instance: value)),
       instanceLocation: context.instanceLocation,
       keywordLocation: context.keywordLocation
     )

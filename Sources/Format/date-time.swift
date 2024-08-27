@@ -29,7 +29,7 @@ func validateDateTime(_ context: Context, _ value: String) -> AnySequence<Valida
 
   return AnySequence([
     ValidationError(
-      "'\(value)' is not a valid RFC 3339 formatted time.",
+      .formatting(.rfc3339Time(instance: value)),
       instanceLocation: context.instanceLocation,
       keywordLocation: context.keywordLocation
     )

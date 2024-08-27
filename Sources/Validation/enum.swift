@@ -13,7 +13,7 @@ func `enum`(context: Context, enum: Any, instance: Any, schema: [String: Any]) -
 
   return AnySequence([
     ValidationError(
-      "'\(instance)' is not a valid enumeration value of '\(`enum`)'",
+      .applicators(.enumNotMet(instance: instance, enum: `enum`)),
       instanceLocation: context.instanceLocation,
       keywordLocation: context.keywordLocation
     )

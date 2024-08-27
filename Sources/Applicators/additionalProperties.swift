@@ -1,6 +1,5 @@
 import Foundation
 
-
 func findAdditionalProperties(instance: [String: Any], schema: [String: Any]) -> Set<String> {
   var keys: Set<String> = Set(instance.keys)
 
@@ -39,7 +38,7 @@ func additionalProperties(context: Context, additionalProperties: Any, instance:
   }
 
   if let additionalProperties = additionalProperties as? Bool, !additionalProperties && !extras.isEmpty {
-    return invalidValidation(context, "Additional properties are not permitted in this object.")(instance)
+    return invalidValidation(context, .applicators(.additionalItemsNotPermitted))(instance)
   }
 
   return AnySequence(EmptyCollection())

@@ -6,7 +6,7 @@ func oneOf(context: Context, oneOf: Any, instance: Any, schema: [String: Any]) t
   if try oneOf.filter({ try context.descend(instance: instance, subschema: $0).isValid }).count != 1 {
     return AnySequence([
       ValidationError(
-        "Only one value from `oneOf` should be met",
+        .applicators(.oneOfNotMet(oneOf: oneOf, instance: instance)),
         instanceLocation: context.instanceLocation,
         keywordLocation: context.keywordLocation
       ),

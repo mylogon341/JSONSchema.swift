@@ -43,7 +43,7 @@ func validateDuration(_ context: Context, _ value: String) -> AnySequence<Valida
   guard isValidDuration(value) else {
     return AnySequence([
       ValidationError(
-        "'\(value)' is not a valid duration.",
+        .formatting(.duration(instance: value)),
         instanceLocation: context.instanceLocation,
         keywordLocation: context.keywordLocation
       )

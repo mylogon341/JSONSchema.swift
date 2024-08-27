@@ -1,4 +1,9 @@
-func additionalItems(context: Context, additionalItems: Any, instance: Any, schema: [String: Any]) throws -> AnySequence<ValidationError> {
+
+func additionalItems(context: Context,
+                     additionalItems: Any,
+                     instance: Any,
+                     schema: [String: Any]) throws -> AnySequence<ValidationError> {
+  
   guard let instance = instance as? [Any], let items = schema["items"] as? [Any], instance.count > items.count else {
     return AnySequence(EmptyCollection())
   }
@@ -12,7 +17,8 @@ func additionalItems(context: Context, additionalItems: Any, instance: Any, sche
   }
 
   if let additionalItems = additionalItems as? Bool, !additionalItems {
-    return invalidValidation(context, "Additional results are not permitted in this array.")(instance)
+    return invalidValidation(context,
+                             .applicators(.additionalItemsNotPermitted))(instance)
   }
 
   return AnySequence(EmptyCollection())

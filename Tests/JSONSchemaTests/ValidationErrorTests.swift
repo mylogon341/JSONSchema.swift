@@ -6,7 +6,7 @@ import Spectre
 public let testValidationError: ((ContextType) -> Void) = {
   $0.it("can be converted to JSON") {
     let error = ValidationError(
-      "example description",
+      .meta(.falsySchema),
       instanceLocation: JSONPointer(path: "/test/1"),
       keywordLocation: JSONPointer(path: "#/example")
     )
@@ -15,7 +15,7 @@ public let testValidationError: ((ContextType) -> Void) = {
     let json = try! JSONSerialization.jsonObject(with: jsonData) as! NSDictionary
 
     try expect(json) == [
-      "error": "example description",
+      "error": "Falsy schema",
       "instanceLocation": "/test/1",
       "keywordLocation": "#/example",
     ]

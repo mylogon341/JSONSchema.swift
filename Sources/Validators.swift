@@ -1,13 +1,27 @@
 import CoreFoundation
 import Foundation
 
+public enum ValidationErrorTypeCheck: ValidationErrorReasonType {
+  case mismatch(instance: Any, types: String)
+  case keywordUnsupported(keyword: String)
+  
+  public var description: String {
+    switch self {
+    case .mismatch(instance: let instance, types: let types):
+      "'\(instance)' is not of type \(types)"
+    case .keywordUnsupported(keyword: let keyword):
+      "'\(keyword)' is not supported."
+    }
+  }
+}
+
 /// Creates a Validator which always returns an valid result
 func validValidation(_ value: Any) -> AnySequence<ValidationError> {
   return AnySequence(EmptyCollection())
 }
 
 /// Creates a Validator which always returns an invalid result with the given error
-func invalidValidation(_ context: Context, _ error: String) -> (_ value: Any) -> AnySequence<ValidationError> {
+func invalidValidation(_ context: Context, _ error: ValidationErrorReason) -> (_ value: Any) -> AnySequence<ValidationError> {
   return { value in
     return AnySequence([
       ValidationError(
@@ -21,7 +35,10 @@ func invalidValidation(_ context: Context, _ error: String) -> (_ value: Any) ->
 
 // MARK: Shared
 
-func type(context: Context, type: Any, instance: Any, schema: [String: Any]) -> AnySequence<ValidationError> {
+func type(context: Context,
+          type: Any,
+          instance: Any,
+          schema: [String: Any]) -> AnySequence<ValidationError> {
   func ensureArray(_ value: Any) -> [String]? {
     if let value = value as? [String] {
       return value
@@ -45,7 +62,7 @@ func type(context: Context, type: Any, instance: Any, schema: [String: Any]) -> 
   let types = type.map { "'\($0)'" }.joined(separator: ", ")
   return AnySequence([
     ValidationError(
-      "'\(instance)' is not of type \(types)",
+      .typeCheck(.mismatch(instance: instance, types: types)),
       instanceLocation: context.instanceLocation,
       keywordLocation: context.keywordLocation
     )
@@ -166,7 +183,7 @@ func unsupported(_ keyword: String) -> (_ context: Context, _ value: Any, _ inst
   return { (context, _, _, _) in
     return AnySequence([
       ValidationError(
-        "'\(keyword)' is not supported.",
+        .typeCheck(.keywordUnsupported(keyword: keyword)),
         instanceLocation: context.instanceLocation,
         keywordLocation: context.keywordLocation
       ),

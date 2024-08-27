@@ -1,3 +1,15 @@
+
+public enum ValidationErrorPropertyInclusion: ValidationErrorReasonType {
+  case propertyMissing(key: String)
+  
+  public var description: String {
+    switch self {
+    case .propertyMissing(key: let key):
+      "Required property '\(key)' is missing"
+    }
+  }
+}
+
 func required(context: Context, required: Any, instance: Any, schema: [String: Any]) throws -> AnySequence<ValidationError> {
   guard let instance = instance as? [String: Any] else {
     return AnySequence(EmptyCollection())
@@ -11,7 +23,7 @@ func required(context: Context, required: Any, instance: Any, schema: [String: A
   return AnySequence(required.compactMap { key -> ValidationError? in
     guard !instance.keys.contains(key) else { return nil }
     return ValidationError(
-      "Required property '\(key)' is missing",
+      .propertyInclusion(.propertyMissing(key: key)),
       instanceLocation: context.instanceLocation,
       keywordLocation: context.keywordLocation
     )

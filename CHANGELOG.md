@@ -18,6 +18,12 @@
   cases when the meta spec or the `$schema` URI both contain and don't contain
   empty trailing fragments as the same meta schema.
 
+## 0.7.0
+- `ValidationError` now has a `.errorReason` property so you can programatically 
+  handle different situations, such as custom error handling and custom localisation
+  and presentation of errors. `.description` still remains, but is still hard-coded 
+  English.
+
 ## 0.6.0
 
 ### Breaking Changes

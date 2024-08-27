@@ -15,7 +15,7 @@ func dependencies(context: Context, dependencies: Any, instance: Any, schema: [S
         if !instance.keys.contains(key) {
           results.append(AnySequence([
             ValidationError(
-              "'\(key)' is a dependency for '\(property)'",
+              .applicators(.missingDependency(key: key, property: property)),
               instanceLocation: context.instanceLocation,
               keywordLocation: context.keywordLocation
             ),
