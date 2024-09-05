@@ -39,7 +39,8 @@ func minItems(context: Context, minItems: Any, instance: Any, schema: [String: A
     return AnySequence(EmptyCollection())
   }
   
-  return validateArrayLength(context, minItems, 
+  return validateArrayLength(context, 
+                             minItems,
                              comparitor: >=,
                              error: .tooFewItems(min: minItems))(instance)
 }
