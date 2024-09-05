@@ -30,18 +30,18 @@ func validateNumericLength<N: Comparable>(_ context: Context,
           )
         ])
       }
-      
-      if !comparitor(value, length) {
-        return AnySequence([
-          ValidationError(
-            .numericValue(error),
-            instanceLocation: context.instanceLocation,
-            keywordLocation: context.keywordLocation
-          )
-        ])
-      }
     }
-
+    
+    if !comparitor(value, length) {
+      return AnySequence([
+        ValidationError(
+          .numericValue(error),
+          instanceLocation: context.instanceLocation,
+          keywordLocation: context.keywordLocation
+        )
+      ])
+    }
+    
     return AnySequence(EmptyCollection())
   }
 }
